@@ -18,7 +18,7 @@ use \PDOException;
 function get($id) {
     return (object) array(
         "id" => 1337,
-        "text" => "Text",
+        "text" => "Text1",
         "date" => new \DateTime('2011-01-01T15:03:01'),
         "author" => \Model\User\get(2)
     );
