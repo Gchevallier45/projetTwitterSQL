@@ -16,12 +16,25 @@ use \PDOException;
  * @warning the date attribute is a DateTime object
  */
 function get($id) {
-    return (object) array(
-        "id" => 1337,
-        "text" => "Text1",
-        "date" => new \DateTime('2011-01-01T15:03:01'),
-        "author" => \Model\User\get(2)
-    );
+	$db = \Db::dbc();
+	$sql = "SELECT IDTWEET,IDUSER,DATE_P,TEXTE FROM TWEET WHERE IDTWEET = :id";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':id' => $id
+	)
+	);
+	$result = $sth->fetch();
+	if($result[0] == null){
+		return null;
+	}
+	else{
+	    return (object) array(
+		"id" => $result[0],
+		"text" => $result[3],
+		"date" => new \DateTime($result[2]),/*new \DateTime('2011-01-01T15:03:01'),*/
+		"author" => \Model\User\get($result[1])
+	    );
+	}
 }
 
 /**
@@ -59,7 +72,18 @@ function get_with_joins($id) {
  * @warning this function takes care to rollback if one of the queries comes to fail.
  */
 function create($author_id, $text, $response_to=null) {
-    return 1337;
+    //return 1337;
+	$db = \Db::dbc();
+	$sql = "INSERT INTO TWEET (IDUSER,IDTWEET_REPONDRE,DATE_P,TEXTE) VALUES (:user,:responseto,:date,:text)";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':user' => $author_id,
+	':responseto' => $response_to,
+	':date' => date("y.m.d"),
+	':text' => $text,
+	)
+	);
+	return $db->lastInsertId();
 }
 
 /**
