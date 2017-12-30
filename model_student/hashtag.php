@@ -14,6 +14,31 @@ use \PDOException;
  * @param hashtag_name the name of the hashtag to attach
  */
 function attach($pid, $hashtag_name) {
+	//echo $hashtag_name."\n";
+	$db = \Db::dbc();
+	$sql = "SELECT TAG FROM HASHTAG WHERE TAG=:tag";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':tag' => $hashtag_name,
+	)
+	);
+	$result = $sth->fetch();
+	if($result[0] == null){
+		$sql = "INSERT INTO HASHTAG (TAG,DATE_P) VALUES (:tag,:date)";
+		$sth = $db->prepare($sql);
+		$sth->execute(array(
+		':tag' => $hashtag_name,
+		':date' => date("y.m.d"),
+		)
+		);
+	}
+	$sql = "INSERT INTO REFERENCE (TAG,IDTWEET) VALUES (:tag,:idtweet)";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':tag' => $hashtag_name,
+	':idtweet' => $pid,
+	)
+	);	
 }
 
 /**
@@ -21,7 +46,21 @@ function attach($pid, $hashtag_name) {
  * @return a list of hashtags names
  */
 function list_hashtags() {
-    return ["Test"];
+    /*return ["Test"];*/
+	$db = \Db::dbc();
+	$sql = "SELECT TAG FROM HASHTAG";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	)
+	);
+	$result = $sth->fetchAll();
+
+	$return = array();
+	foreach($result as $res){
+		$return[] = $res[0];	
+	}
+
+    return $return;
 }
 
 /**

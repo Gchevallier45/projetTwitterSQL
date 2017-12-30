@@ -74,6 +74,7 @@ function get_with_joins($id) {
 function create($author_id, $text, $response_to=null) {
     //return 1337;
 	$db = \Db::dbc();
+
 	$sql = "INSERT INTO TWEET (IDUSER,IDTWEET_REPONDRE,DATE_P,TEXTE) VALUES (:user,:responseto,:date,:text)";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
@@ -83,7 +84,16 @@ function create($author_id, $text, $response_to=null) {
 	':text' => $text,
 	)
 	);
-	return $db->lastInsertId();
+	$postId = $db->lastInsertId();
+
+	$matches = array();
+	preg_match_all('/#([^\s]+)/', $text, $matches);	
+	foreach($matches[1] as $match){
+		//echo $match;
+		\Model\Hashtag\attach($postId,$match);
+	}
+
+	return $postId;
 }
 
 /**
