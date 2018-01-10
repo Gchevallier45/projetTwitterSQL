@@ -68,7 +68,7 @@ function get_with_joins($id) {
 			"author" => $post->author,
 			"likes" => $get_likes($id),
 			"hashtags" => \Model\Post\extract_hashtags($post->text),
-			"responds_to" => \Model\Post\extract_mentions(
+			"responds_to" => get_responses($pid),
 		);
 	}
 }
@@ -104,11 +104,11 @@ function create($author_id, $text, $response_to=null) {
 		\Model\Hashtag\attach($postId,$match);
 	}
 
-	$mentionMatches = \Model\Post\extract_mentions($test);
+	$mentionMatches = \Model\Post\extract_mentions($text);
 	foreach($mentionMatches as $match){
 		$user = \Model\User\get_by_username($match);
 		if($user != null){
-			
+			mention_user($postId,$user);
 		}
 		//echo 'lol'.$match;
 		//\Model\Hashtag\attach($postId,$match);
