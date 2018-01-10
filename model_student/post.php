@@ -48,15 +48,29 @@ function get($id) {
  * @warning the responds_to attribute is either null (if the post is not a response) or a post object
  */
 function get_with_joins($id) {
-    return (object) array(
-        "id" => 1337,
-        "text" => "Ima writing a post !",
-        "date" => new \DateTime('2011-01-01T15:03:01'),
-        "author" => \Model\User\get(2),
-        "likes" => [],
-        "hashtags" => [],
-        "responds_to" => null
-    );
+	/*$db = \Db::dbc();
+	$sql = "SELECT IDTWEET,IDUSER,DATE_P,TEXTE FROM TWEET WHERE IDTWEET = :id";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':id' => $id
+	)
+	);
+	$result = $sth->fetch();*/
+	$post = get($id);
+	if($get == null){
+		return null;
+	}
+	else{	
+		return (object) array(
+			"id" => $post->id,
+			"text" => $post->text,
+			"date" => new \DateTime($post->date),
+			"author" => $post->author,
+			"likes" => $get_likes($id),
+			"hashtags" => \Model\Post\extract_hashtags($post->text),
+			"responds_to" => \Model\Post\extract_mentions(
+		);
+	}
 }
  
 /**
@@ -85,12 +99,20 @@ function create($author_id, $text, $response_to=null) {
 	);
 	$postId = $db->lastInsertId();
 
-	$matches = array();
-	preg_match_all('/#([^\s]+)/', $text, $matches);	
-	foreach($matches[1] as $match){
-		//echo $match;
+	$hashtagMatches = \Model\Post\extract_hashtags($text);
+	foreach($hashtagMatches as $match){
 		\Model\Hashtag\attach($postId,$match);
 	}
+
+	$mentionMatches = \Model\Post\extract_mentions($test);
+	foreach($mentionMatches as $match){
+		$user = \Model\User\get_by_username($match);
+		if($user != null){
+			
+		}
+		//echo 'lol'.$match;
+		//\Model\Hashtag\attach($postId,$match);
+	}	
 
 	return $postId;
 }
@@ -176,7 +198,20 @@ function list_user_posts($id, $date_sorted="DESC") {
  * @return the users objects who liked the post
  */
 function get_likes($pid) {
-    return [];
+	$db = \Db::dbc();
+	$sql = "SELECT IDUSER FROM AIMER WHERE IDTWEET = :pid";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':pid' => $pid
+	)
+	);
+	$userarray = array();
+	$result = $sth->fetchAll();
+	foreach($result as $line){
+		$userarray[] = get($line[0]);
+	}
+    return $userarray;
+	//return [];
 }
 
 /**
