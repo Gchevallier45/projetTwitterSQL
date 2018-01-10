@@ -48,14 +48,6 @@ function get($id) {
  * @warning the responds_to attribute is either null (if the post is not a response) or a post object
  */
 function get_with_joins($id) {
-	/*$db = \Db::dbc();
-	$sql = "SELECT IDTWEET,IDUSER,DATE_P,TEXTE FROM TWEET WHERE IDTWEET = :id";
-	$sth = $db->prepare($sql);
-	$sth->execute(array(
-	':id' => $id
-	)
-	);
-	$result = $sth->fetch();*/
 	$post = get($id);
 	if($get == null){
 		return null;
@@ -211,7 +203,7 @@ function get_likes($pid) {
 		$userarray[] = get($line[0]);
 	}
     return $userarray;
-	//return [];
+	//return [];1
 }
 
 /**
