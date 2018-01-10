@@ -101,6 +101,17 @@ function create($author_id, $text, $response_to=null) {
  * @param uid the user id to mention
  */
 function mention_user($pid, $uid) {
+	$db = \Db::dbc();
+
+	$sql = "INSERT INTO TWEET (ID_USER_MENTIONNER,IDTWEET,NOTIFMENTION) VALUES (:user,:post,:date)";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':user' => $uid,
+	':post' => $pid,
+	':date' => date("y.m.d"),
+	)
+	);
+
 }
 
 /**
@@ -109,7 +120,19 @@ function mention_user($pid, $uid) {
  * @return the array of user objects mentioned
  */
 function get_mentioned($pid) {
-    return [];
+	$db = \Db::dbc();	
+	
+	$sql = "SELECT DISTINCT ID_USER_MENTIONNER FROM MENTIONNER WHERE IDTWEET = :post";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':post' => $pid,
+	)
+	);
+	
+	$user = $sth->fetch();
+	$userFull = get($user);
+
+	return $userFull;
 }
 
 /**

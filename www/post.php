@@ -15,11 +15,14 @@ elseif(isset($_GET['id'])) {
     else if(isset($_GET['unlike'])) {
         Controller\Post\unlike($_GET['id']);
     }
+    else if(isset($_GET['destroy'])) {
+        Controller\Post\destroy($_GET['id']);
+    }
     else {
         Controller\Post\post_page($_GET['id']);
     }
 }
 else {
-    header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+    \headerm($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 }
 require '../lib/closure.php';

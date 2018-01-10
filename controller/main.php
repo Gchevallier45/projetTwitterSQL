@@ -21,7 +21,7 @@ function main() {
         $popular_h = \Model\Hashtag\list_popular_hashtags(10);
     }
     catch(\Exception $e) {
-        echo "An error occured :".$e->getMessage();
+        \display_exception($e);
         exit();
     }
     require "../view/timeline.php";

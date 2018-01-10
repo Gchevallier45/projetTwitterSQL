@@ -11,6 +11,7 @@ require "session.php";
 require "/home/ubuntu/vendor/autoload.php";
 require "db.php";
 require "http.php";
+require "exception.php";
 
 Db::connect();
 

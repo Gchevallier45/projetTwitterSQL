@@ -5,7 +5,7 @@ function notification_page() {
     try {
         $user = \Session\get_user();
         if(!$user) {
-            header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden", true, 403);
+            \headerm($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden", true, 403);
             return;
         }
         $notifications = \Model\Notification\list_all_notifications($user->id);
@@ -14,7 +14,7 @@ function notification_page() {
         }
     }
     catch(\Exception $e) {
-        echo "An error occured :".$e->getMessage();
+        \display_exception($e);
         exit();
     }
     

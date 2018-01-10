@@ -71,7 +71,7 @@
 
 \title{DB Practical Work 2:\\The Post model}
 
-\date{\today}
+\date{}
 
 \begin{document}
 
@@ -241,7 +241,7 @@ A user can like a post. This association has to be modeled accordingly.
 \texttt{unlike} removes a like association.
 
 \subsection{\texttt{get\_likes(\$pid)}}
-\texttt{get\_likes} returns the user objects who liked the post.
+\texttt{get\_likes} returns the list (array) of the user objects who liked the post.
 
 \subsection{\texttt{get\_with\_joins(\$id)}}
 It is time to make \texttt{get\_with\_joins} handle likes. The \texttt{likes} attribute must be a list of user objects.

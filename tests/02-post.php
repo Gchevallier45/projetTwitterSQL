@@ -100,8 +100,8 @@ class PostTest extends TestCase
         $s = Post\search("earchid");
         $this->assertEquals(2, count($s));
         $ms = array_map(function($e) { return $e->id; }, $s);
-        $this->assertContains($pid2, $ms, "search should perform a substring matching on text");
-        $this->assertContains($pid1, $ms, "search should perform a substring matching on text");
+        $this->assertContains($pid2, $ms, "search should perform a substring matching on text", false, false);
+        $this->assertContains($pid1, $ms, "search should perform a substring matching on text", false, false);
     }
 
     /**

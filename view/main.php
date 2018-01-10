@@ -8,11 +8,8 @@
 
     <title>Twirper</title>
 
-    <link rel="stylesheet" href="/css/pure-min.css">
+    <link rel="stylesheet" href="/css/pure/pure-min.css">
     <link rel="stylesheet" href="/css/custom.css"> 
-    <!--[if lt IE 9]>
-        <script src="/css/html5shiv.js"></script>
-    <![endif]-->
 </head>
 <body>
 <div id="layout" class="content pure-g">

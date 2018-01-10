@@ -100,8 +100,8 @@ class UserTest extends TestCase
         $new_user = User\get($new_uid);
         $l = User\list_all();
         $this->assertEquals(2, count($l), "list_all should list every user");
-        $this->assertTrue(in_array($new_user, $l), "list_all should list every user in user objects");
-        $this->assertTrue(in_array($existing_user, $l), "list_all should list every user in user objects");
+        $this->assertContains($new_user, $l, "list_all should list every user in user objects", false, false);
+        $this->assertContains($existing_user, $l, "list_all should list every user in user objects", false, false);
         return [$existing_user, $new_user];
     }
 

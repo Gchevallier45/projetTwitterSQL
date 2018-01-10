@@ -78,6 +78,10 @@ a:hover {
     border-bottom: 1px solid #eeeeee;
 }
 
+.post .post-content .actions {
+    float: right;
+}
+
 .post .post-content, .user-head .user-name {
     display: inline-block;
     padding: 5px;
