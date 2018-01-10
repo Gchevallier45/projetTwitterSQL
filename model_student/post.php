@@ -154,6 +154,13 @@ function get_mentioned($pid) {
  * @param id the id of the post to delete
  */
 function destroy($id) {
+	$db = \Db::dbc();
+	$sql = "DELETE FROM TWEET WHERE IDTWEET = :id";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':id' => $id,
+	)
+	);	
 }
 
 /**
