@@ -270,6 +270,16 @@ function get_stats($pid) {
  * @param pid the post's id to be liked
  */
 function like($uid, $pid) {
+	$db = \Db::dbc();
+
+	$sql = "INSERT INTO AIMER (IDTWEET,IDUSER,DATE_LIKE) VALUES (:uid,:pid,date)";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':uid' => $uid,
+	':pid' => $pid,
+	':date' => date("y.m.d"),
+	)
+	);	
 }
 
 /**
@@ -278,5 +288,13 @@ function like($uid, $pid) {
  * @param pid the post's id to be unliked
  */
 function unlike($uid, $pid) {
+	$db = \Db::dbc();
+	$sql = "DELETE FROM AIMER WHERE IDUSER = :id AND IDPOST = :pid";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':uid' => $uid,
+	':pid' => $pid,
+	)
+	);
 }
 
