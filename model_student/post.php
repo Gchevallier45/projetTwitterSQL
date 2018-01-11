@@ -195,7 +195,23 @@ function search($string) {
  * @return an array of the objects of each post
  */
 function list_all($date_sorted=false) {
-    return [];
+	$db = \Db::dbc();
+
+	if($date_sorted){
+		$sql = "SELECT IDTWEET FROM TWEET ORDER BY DATEPUBLICATION"; 
+	}else{
+		$sql = "SELECT IDTWEET FROM TWEET";
+	}
+	$sth = $db->prepare($sql);
+	$sth->execute(array()
+	);
+
+	$results = $sth->fetchall();
+	foreach($results in $line){
+		$postArray [] = get($line[0]);
+	}
+
+    	return $postArray;
 }
 
 /**
