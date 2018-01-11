@@ -17,7 +17,7 @@ use \PDOException;
  */
 function get($id) {
 	$db = \Db::dbc();
-	$sql = "SELECT IDTWEET,IDUSER,DATE_P,TEXTE FROM TWEET WHERE IDTWEET = :id";
+	$sql = "SELECT IDTWEET,IDUSER,DATE_P,TEXTE,IDTWEET_REPONDRE FROM TWEET WHERE IDTWEET = :id";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':id' => $id
@@ -32,7 +32,8 @@ function get($id) {
 		"id" => $result[0],
 		"text" => $result[3],
 		"date" => new \DateTime($result[2]),/*new \DateTime('2011-01-01T15:03:01'),*/
-		"author" => \Model\User\get($result[1])
+		"author" => \Model\User\get($result[1]),
+		"responds_to" => get($result[4]),
 	    );
 	}
 }
@@ -53,7 +54,6 @@ function get_with_joins($id) {
 		return false;
 	}
 	else{	
-echo "noooooooooooooooooooooooooooooooooooooooooooooo :";
 		return (object) array(
 			"id" => $post->id,
 			"text" => $post->text,
@@ -61,7 +61,7 @@ echo "noooooooooooooooooooooooooooooooooooooooooooooo :";
 			"author" => $post->author,
 			"likes" => get_likes($id),
 			"hashtags" => \Model\Post\extract_hashtags($post->text),
-			"responds_to" => get_responses($id),
+			"responds_to" => $post->responds_to,
 		);
 	}
 }
@@ -236,7 +236,7 @@ function get_likes($pid) {
  * @return the posts objects which are a response to the actual post
  */
 function get_responses($pid) {
-	echo "POST : ".$pid;
+	//echo "POST : ".$pid;
 	$db = \Db::dbc();
 	$sql = "SELECT IDTWEET FROM TWEET WHERE IDTWEET_REPONDRE = :pid";
 	$sth = $db->prepare($sql);
