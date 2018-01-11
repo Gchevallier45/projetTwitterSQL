@@ -169,7 +169,23 @@ function destroy($id) {
  * @return an array of find objects
  */
 function search($string) {
-    return [];
+	$db = \Db::dbc();
+
+	$sql = "SELECT IDTWEET FROM TWEET WHERE TEXTTWEET like *:string*"; 
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':string' => $string,
+	)
+	);	
+	$result = $sth->fetchAll();
+	foreach ($result as $line){
+		$tweetArray [] = get($line[0]);
+	}
+	if ($sth == null){
+		return null;
+	}else{
+		return $tweetArray;
+    	}
 }
 
 /**
