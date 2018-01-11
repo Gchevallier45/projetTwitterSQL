@@ -49,18 +49,19 @@ function get($id) {
  */
 function get_with_joins($id) {
 	$post = get($id);
-	if($get == null){
-		return null;
+	if($post == null){
+		return false;
 	}
 	else{	
+echo "noooooooooooooooooooooooooooooooooooooooooooooo :";
 		return (object) array(
 			"id" => $post->id,
 			"text" => $post->text,
-			"date" => new \DateTime($post->date),
+			"date" => $post->date,
 			"author" => $post->author,
-			"likes" => $get_likes($id),
+			"likes" => get_likes($id),
 			"hashtags" => \Model\Post\extract_hashtags($post->text),
-			"responds_to" => get_responses($pid),
+			"responds_to" => get_responses($id),
 		);
 	}
 }
@@ -223,7 +224,7 @@ function get_likes($pid) {
 	$userarray = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
-		$userarray[] = get($line[0]);
+		$userarray[] = Model\User\get($line[0]);
 	}
     return $userarray;
 	//return [];1
@@ -235,7 +236,22 @@ function get_likes($pid) {
  * @return the posts objects which are a response to the actual post
  */
 function get_responses($pid) {
-    return [];
+	echo "POST : ".$pid;
+	$db = \Db::dbc();
+	$sql = "SELECT IDTWEET FROM TWEET WHERE IDTWEET_REPONDRE = :pid";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+	':pid' => $pid
+	)
+	);
+	$postarray = array();
+	$result = $sth->fetchAll();	
+	foreach($result as $line){
+		//echo "LINE :".$line[0];
+		$postarray[] = get($line[0]);
+	}
+    return $postarray;    
+	//return [];
 }
 
 /**
