@@ -197,17 +197,24 @@ function search($string) {
 function list_all($date_sorted=false) {
 	$db = \Db::dbc();
 
-	if($date_sorted){
-		$sql = "SELECT IDTWEET FROM TWEET ORDER BY DATEPUBLICATION"; 
+	if($date_sorted != false){
+		$sql = "SELECT IDTWEET FROM TWEET ORDER BY DATE_P :order"; 
+		$sth = $db->prepare($sql);
+		$sth->execute(array(
+		':order' => $date_sorted,	
+		)
+		);
 	}else{
 		$sql = "SELECT IDTWEET FROM TWEET";
+		$sth = $db->prepare($sql);
+		$sth->execute(array(	
+		)
+		);
 	}
-	$sth = $db->prepare($sql);
-	$sth->execute(array()
-	);
 
+	$postArray = array();
 	$results = $sth->fetchall();
-	foreach($results in $line){
+	foreach($results as $line){
 		$postArray [] = get($line[0]);
 	}
 
