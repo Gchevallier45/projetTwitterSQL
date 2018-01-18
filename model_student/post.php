@@ -80,13 +80,12 @@ function get_with_joins($id) {
  */
 function create($author_id, $text, $response_to=null) {
 	$db = \Db::dbc();
-
 	$sql = "INSERT INTO TWEET (IDUSER,IDTWEET_REPONDRE,DATE_P,TEXTE) VALUES (:user,:responseto,:date,:text)";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':user' => $author_id,
 	':responseto' => $response_to,
-	':date' => date("y.m.d"),
+	':date' => date("y.m.d H.i.s"),
 	':text' => $text,
 	)
 	);
@@ -123,7 +122,7 @@ function mention_user($pid, $uid) {
 	$sth->execute(array(
 	':user' => $uid,
 	':post' => $pid,
-	':date' => date("y.m.d"),
+	':date' => date("y.m.d H.i.s"),
 	)
 	);
 
@@ -171,16 +170,18 @@ function destroy($id) {
  */
 function search($string) {
 	$db = \Db::dbc();
-
-	$sql = "SELECT IDTWEET FROM TWEET WHERE TEXTTWEET like *:string*"; 
+	echo $string;
+	$sql = "SELECT IDTWEET FROM TWEET WHERE TEXTE like :string"; 
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
-	':string' => $string,
+	':string' => "%".$string."%",
 	)
 	);	
 	$result = $sth->fetchAll();
+	$tweetArray = array();
 	foreach ($result as $line){
 		$tweetArray [] = get($line[0]);
+		echo $line[0]."-";
 	}
 	if ($sth == null){
 		return null;
@@ -197,14 +198,21 @@ function search($string) {
 function list_all($date_sorted=false) {
 	$db = \Db::dbc();
 
-	if($date_sorted != false){
-		$sql = "SELECT IDTWEET FROM TWEET ORDER BY DATE_P :order"; 
+	if($date_sorted == "DESC"){
+		$sql = "SELECT IDTWEET FROM TWEET ORDER BY DATE_P DESC"; 
 		$sth = $db->prepare($sql);
-		$sth->execute(array(
-		':order' => $date_sorted,	
+		$sth->execute(array(	
 		)
 		);
-	}else{
+	}
+	else if($date_sorted == "ASC"){
+		$sql = "SELECT IDTWEET FROM TWEET ORDER BY DATE_P ASC"; 
+		$sth = $db->prepare($sql);
+		$sth->execute(array(	
+		)
+		);		
+	}
+	else{
 		$sql = "SELECT IDTWEET FROM TWEET";
 		$sth = $db->prepare($sql);
 		$sth->execute(array(	
@@ -244,12 +252,12 @@ function get_likes($pid) {
 	':pid' => $pid
 	)
 	);
-	$userarray = array();
+	$likesarray = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
-		$userarray[] = Model\User\get($line[0]);
+		$likesarray[] = Model\User\get($line[0]);
 	}
-    return $userarray;
+    return $likesarray;
 	//return [];1
 }
 
@@ -300,7 +308,7 @@ function like($uid, $pid) {
 	$sth->execute(array(
 	':uid' => $uid,
 	':pid' => $pid,
-	':date' => date("y.m.d"),
+	':date' => date("y.m.d H.i.s"),
 	)
 	);	
 }

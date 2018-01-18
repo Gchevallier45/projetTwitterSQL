@@ -61,7 +61,7 @@ function create($username, $name, $password, $email, $avatar_path) {
 	$sth->execute(array(
 	':username' => $username,
 	':name' => $name,
-	':signup' => date("y.m.d"),
+	':signup' => date("y.m.d H.i.s"),
 	':email' => $email,
 	':password' => hash_password($password),
 	)
@@ -313,7 +313,7 @@ function follow($id, $id_to_follow) {
 	$sth->execute(array(
 	':id' => $id,
 	':id1' => $id_to_follow,
-	':date' => date("y.m.d"),
+	':date' => date("y.m.d H.i.s"),
 	)
 	);
 }

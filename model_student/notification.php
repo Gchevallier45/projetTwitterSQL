@@ -34,8 +34,8 @@ function get_liked_notifications($uid) {
 					"type" => "liked",
 					"post" => \Model\Post\get($line[0]),
 					"liked_by" => \Model\User\get($line[1]),
-					"date" => date($line[2]),
-					"reading_date" => date("y.m.d")
+					"date" => new \DateTime($line[2]),
+					"reading_date" => date("y.m.d H.i.s")
     				)];
 		liked_notification_seen($line[0], $line[1]);
 	}
@@ -61,7 +61,7 @@ function liked_notification_seen($pid, $uid) {
 	$sql = "UPDATE AIMER SET DATE_LU = :date WHERE IDUSER = :uid and IDTWEET = :pid";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
-	':date' => date("y.m.d"),
+	':date' => date("y.m.d H.i.s"),
 	':uid' => $uid,
 	':pid' => $pid,
 	)
@@ -96,7 +96,7 @@ function mentioned_notification_seen($uid, $pid) {
 	$sql = "UPDATE MENTIONNER SET DATE_LU = :date WHERE IDUSER = :uid and IDPOST = :pid";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
-	':date' => date("y.m.d"),
+	':date' => date("y.m.d H.i.s"),
 	':uid' => $uid,
 	':pid' => $pid,
 	)
@@ -129,7 +129,7 @@ $db = \Db::dbc();
 	$sql = "UPDATE SUIVRE SET DATE_LU = :date WHERE IDUSER = :uid and IDPOST = :pid";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
-	':date' => date("y.m.d"),
+	':date' => date("y.m.d H.i.s"),
 	':uid' => $uid,
 	':pid' => $pid,
 	)

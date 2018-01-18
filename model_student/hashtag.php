@@ -27,7 +27,7 @@ function attach($pid, $hashtag_name) {
 		$sth = $db->prepare($sql);
 		$sth->execute(array(
 		':tag' => $hashtag_name,
-		':date' => date("y.m.d"),
+		':date' => date("y.m.d H.i.s"),
 		)
 		);
 	}
