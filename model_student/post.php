@@ -237,7 +237,41 @@ function list_all($date_sorted=false) {
  * @return the list of posts objects
  */
 function list_user_posts($id, $date_sorted="DESC") {
-    return [];
+	$db = \Db::dbc();
+
+	if($date_sorted == "DESC"){
+		$sql = "SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid ORDER BY DATE_P DESC"; 
+		$sth = $db->prepare($sql);
+		$sth->execute(array(
+			':uid' => $id,	
+		)
+		);
+	}
+	else if($date_sorted == "ASC"){
+		$sql = "SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid ORDER BY DATE_P ASC"; 
+		$sth = $db->prepare($sql);
+		$sth->execute(array(
+			':uid' => $id,		
+		)
+		);		
+	}
+	else{
+		$sql = "SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid";
+		$sth = $db->prepare($sql);
+		$sth->execute(array(	
+			':uid' => $id,	
+		)
+		);
+	}
+
+	$postArray = array();
+	$results = $sth->fetchall();
+	foreach($results as $line){
+		$postArray [] = get($line[0]);
+	}
+
+    	return $postArray;
+    //return [];
 }
 
 /**
