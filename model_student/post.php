@@ -100,7 +100,7 @@ function create($author_id, $text, $response_to=null) {
 	foreach($mentionMatches as $match){
 		$user = \Model\User\get_by_username($match);
 		if($user != null){
-			mention_user($postId,$user);
+			mention_user($postId,$user->id);
 		}
 		//echo 'lol'.$match;
 		//\Model\Hashtag\attach($postId,$match);
@@ -117,7 +117,7 @@ function create($author_id, $text, $response_to=null) {
 function mention_user($pid, $uid) {
 	$db = \Db::dbc();
 
-	$sql = "INSERT INTO TWEET (ID_USER_MENTIONNER,IDTWEET,NOTIFMENTION) VALUES (:user,:post,:date)";
+	$sql = "INSERT INTO MENTIONNER (IDUSER,IDTWEET,DATE_MENTION) VALUES (:user,:post,:date)";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':user' => $uid,
@@ -135,16 +135,19 @@ function mention_user($pid, $uid) {
  */
 function get_mentioned($pid) {
 	$db = \Db::dbc();	
-	
-	$sql = "SELECT DISTINCT ID_USER_MENTIONNER FROM MENTIONNER WHERE IDTWEET = :post";
+	$sql = "SELECT IDUSER FROM MENTIONNER WHERE IDTWEET = :post";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':post' => $pid,
 	)
 	);
 	
-	$user = $sth->fetch();
-	$userFull = get($user);
+	$result = $sth->fetchAll();
+	$userFull = array();
+	foreach ($result as $line){
+		$userFull [] = \Model\User\get($line[0]);
+	}
+	//$userFull = get($user[0]);
 
 	return $userFull;
 }
@@ -170,7 +173,6 @@ function destroy($id) {
  */
 function search($string) {
 	$db = \Db::dbc();
-	echo $string;
 	$sql = "SELECT IDTWEET FROM TWEET WHERE TEXTE like :string"; 
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
@@ -181,7 +183,6 @@ function search($string) {
 	$tweetArray = array();
 	foreach ($result as $line){
 		$tweetArray [] = get($line[0]);
-		echo $line[0]."-";
 	}
 	if ($sth == null){
 		return null;
@@ -245,6 +246,7 @@ function list_user_posts($id, $date_sorted="DESC") {
  * @return the users objects who liked the post
  */
 function get_likes($pid) {
+//echo "piiiiiiiid".$pid;
 	$db = \Db::dbc();
 	$sql = "SELECT IDUSER FROM AIMER WHERE IDTWEET = :pid";
 	$sth = $db->prepare($sql);
@@ -255,7 +257,7 @@ function get_likes($pid) {
 	$likesarray = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
-		$likesarray[] = Model\User\get($line[0]);
+		$likesarray[] = \Model\User\get($line[0]);
 	}
     return $likesarray;
 	//return [];1
@@ -303,7 +305,7 @@ function get_stats($pid) {
 function like($uid, $pid) {
 	$db = \Db::dbc();
 
-	$sql = "INSERT INTO AIMER (IDTWEET,IDUSER,DATE_LIKE) VALUES (:uid,:pid,:date)";
+	$sql = "INSERT INTO AIMER (IDTWEET,IDUSER,DATE_LIKE) VALUES (:pid,:uid,:date)";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':uid' => $uid,
@@ -320,7 +322,7 @@ function like($uid, $pid) {
  */
 function unlike($uid, $pid) {
 	$db = \Db::dbc();
-	$sql = "DELETE FROM AIMER WHERE IDUSER = :id AND IDPOST = :pid";
+	$sql = "DELETE FROM AIMER WHERE IDUSER = :uid AND IDTWEET = :pid";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':uid' => $uid,
