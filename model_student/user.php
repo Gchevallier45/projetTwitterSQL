@@ -260,7 +260,7 @@ function get_stats($uid) {
     return (object) array(
         "nb_posts" => 10,
         "nb_followers" => count(get_followers($uid)),
-        "nb_following" => count(get_following($uid))
+        "nb_following" => count(get_followings($uid))
     );
 }
 
