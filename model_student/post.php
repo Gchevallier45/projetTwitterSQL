@@ -295,7 +295,7 @@ function get_stats($pid) {
 function like($uid, $pid) {
 	$db = \Db::dbc();
 
-	$sql = "INSERT INTO AIMER (IDTWEET,IDUSER,DATE_LIKE) VALUES (:uid,:pid,date)";
+	$sql = "INSERT INTO AIMER (IDTWEET,IDUSER,DATE_LIKE) VALUES (:uid,:pid,:date)";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':uid' => $uid,
