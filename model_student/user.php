@@ -261,11 +261,12 @@ function get_stats($uid) {
 	$sql = "SELECT Count(IDTWEET) FROM TWEET WHERE IDUSER = :uid";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
-		':uid' => $id
+		':uid' => $uid
 	)
-	$nb_posts = fetch()
+	);
+	$nb_posts = $sth->fetch();
     return (object) array(
-        "nb_posts" => 10,
+        "nb_posts" => $nb_posts[0],
         "nb_followers" => count(get_followers($uid)),
         "nb_following" => count(get_followings($uid))
     );

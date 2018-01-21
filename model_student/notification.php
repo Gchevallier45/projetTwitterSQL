@@ -166,12 +166,12 @@ function get_followed_notifications($uid) {
 	':uid' => $uid
 	)
 	);
-	$mentionednotifs = array();
+	$followednotifs = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
 		//echo "found";
 		if($line[3]==null){
-			$mentionednotifs[] = (object) array(
+			$followednotifs[] = (object) array(
 						"type" => "followed",
 						"user" => \Model\User\get($line[0]),
 						"date" => new \DateTime($line[2]),
@@ -179,7 +179,7 @@ function get_followed_notifications($uid) {
 	    				);
 		}
 		else{
-			$mentionednotifs[] = (object) array(
+			$followednotifs[] = (object) array(
 						"type" => "followed",
 						"user" => \Model\User\get($line[0]),
 						"date" => new \DateTime($line[2]),
@@ -189,7 +189,7 @@ function get_followed_notifications($uid) {
 		//mentioned_notification_seen($line[0], $line[1]);
 	}
 	//echo "\n";
-	return $mentionednotifs; 
+	return $followednotifs; 
 
 
     /*return [(object) array(
