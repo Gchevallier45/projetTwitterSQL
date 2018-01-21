@@ -95,19 +95,19 @@ function get_mentioned_notifications($uid) {
 	$db = \Db::dbc();
 	//echo "uid:".$uid;
 	//$sql = "SELECT A.IDTWEET, A.IDUSER, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.DATE_LU IS NULL AND T.IDUSER = :uid";
-	$sql = "SELECT A.IDTWEET, A.IDUSER, A.DATE_LU, T.DATE_P FROM mentionner A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.IDTWEET IN (SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid)";
+	$sql = "SELECT A.IDTWEET, A.IDUSER, A.DATE_LU, T.DATE_P FROM MENTIONNER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.IDTWEET IN (SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid)";
 	$sth = $db->prepare($sql);
 	/*$sth->bindValue(':uid', intval($uid), \PDO::PARAM_INT);*/
 	$sth->execute(array(
 	':uid' => $uid
 	)
 	);
-	$likednotifs = array();
+	$mentionednotifs = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
 		//echo "found";
 		if($line[2]==null){
-			$likednotifs[] = (object) array(
+			$mentionednotifs[] = (object) array(
 						"type" => "mentioned",
 						"post" => \Model\Post\get($line[0]),
 						"mentioned_by" => \Model\User\get($line[1]),
@@ -116,7 +116,7 @@ function get_mentioned_notifications($uid) {
 	    				);
 		}
 		else{
-			$likednotifs[] = (object) array(
+			$mentionednotifs[] = (object) array(
 						"type" => "mentioned",
 						"post" => \Model\Post\get($line[0]),
 						"mentioned_by" => \Model\User\get($line[1]),
@@ -127,7 +127,7 @@ function get_mentioned_notifications($uid) {
 		mentioned_notification_seen($line[1], $line[0]);
 	}
 	//echo "\n";
-	return $likednotifs; 
+	return $mentionednotifs; 
 
 }
 
@@ -138,7 +138,7 @@ function get_mentioned_notifications($uid) {
  */
 function mentioned_notification_seen($uid, $pid) {
 	$db = \Db::dbc();
-	$sql = "UPDATE MENTIONNER SET DATE_LU = :date WHERE IDUSER = :uid and IDPOST = :pid";
+	$sql = "UPDATE MENTIONNER SET DATE_LU = :date WHERE IDUSER = :uid and IDTWEET = :pid";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':date' => date("y.m.d H.i.s"),
@@ -171,7 +171,7 @@ function get_followed_notifications($uid) {
  */
 function followed_notification_seen($followed_id, $follower_id) {
 	$db = \Db::dbc();
-	$sql = "UPDATE SUIVRE SET DATE_LU = :date WHERE IDUSER = :uid and IDPOST = :pid";
+	$sql = "UPDATE SUIVRE SET DATE_LU = :date WHERE IDUSER = :uid and IDTWEET = :pid";
 	$sth = $db->prepare($sql);
 	$sth->execute(array(
 	':date' => date("y.m.d H.i.s"),
