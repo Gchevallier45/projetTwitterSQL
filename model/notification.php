@@ -21,6 +21,7 @@ function list_all_notifications($uid) {
             return $b->date->format('U') - $a->date->format('U');
         }
     );
+    print_r($ary);
     return $ary;
 }
 
