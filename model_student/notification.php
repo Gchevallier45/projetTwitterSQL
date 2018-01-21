@@ -95,7 +95,7 @@ function get_mentioned_notifications($uid) {
 	$db = \Db::dbc();
 	//echo "uid:".$uid;
 	//$sql = "SELECT A.IDTWEET, A.IDUSER, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.DATE_LU IS NULL AND T.IDUSER = :uid";
-	$sql = "SELECT A.IDTWEET, A.IDUSER, A.DATE_LU, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.IDTWEET IN (SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid)";
+	$sql = "SELECT A.IDTWEET, A.IDUSER, A.DATE_LU, T.DATE_P FROM mentionner A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.IDTWEET IN (SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid)";
 	$sth = $db->prepare($sql);
 	/*$sth->bindValue(':uid', intval($uid), \PDO::PARAM_INT);*/
 	$sth->execute(array(
@@ -110,7 +110,7 @@ function get_mentioned_notifications($uid) {
 			$likednotifs[] = (object) array(
 						"type" => "mentioned",
 						"post" => \Model\Post\get($line[0]),
-						"liked_by" => \Model\User\get($line[1]),
+						"mentioned_by" => \Model\User\get($line[1]),
 						"date" => new \DateTime($line[3]),
 						"reading_date" => null
 	    				);
@@ -119,7 +119,7 @@ function get_mentioned_notifications($uid) {
 			$likednotifs[] = (object) array(
 						"type" => "mentioned",
 						"post" => \Model\Post\get($line[0]),
-						"liked_by" => \Model\User\get($line[1]),
+						"mentioned_by" => \Model\User\get($line[1]),
 						"date" => new \DateTime($line[3]),
 						"reading_date" => new \DateTime($line[2]),
 	    				);
