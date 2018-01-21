@@ -326,8 +326,8 @@ function get_responses($pid) {
  */
 function get_stats($pid) {
     return (object) array(
-        "nb_likes" => 10,
-        "nb_responses" => 40
+        "nb_likes" => count(get_likes($pid)),
+        "nb_responses" => count(get_responses($pid))
     );
 }
 
