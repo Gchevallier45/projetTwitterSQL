@@ -257,6 +257,13 @@ function get_followings($uid) {
  * @return an object which describes the stats
  */
 function get_stats($uid) {
+	$db = \Db::dbc();
+	$sql = "SELECT Count(IDTWEET) FROM TWEET WHERE IDUSER = :uid";
+	$sth = $db->prepare($sql);
+	$sth->execute(array(
+		':uid' => $id
+	)
+	$nb_posts = fetch()
     return (object) array(
         "nb_posts" => 10,
         "nb_followers" => count(get_followers($uid)),
