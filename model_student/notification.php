@@ -93,9 +93,9 @@ function liked_notification_seen($pid, $uid) {
 function get_mentioned_notifications($uid) {
 
 	$db = \Db::dbc();
-	//echo "uid:".$uid;
+	echo "uid:".$uid;
 	//$sql = "SELECT A.IDTWEET, A.IDUSER, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.DATE_LU IS NULL AND T.IDUSER = :uid";
-	$sql = "SELECT A.IDTWEET, A.IDUSER, A.DATE_LU, T.DATE_P FROM MENTIONNER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.IDTWEET IN (SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid)";
+	$sql = "SELECT A.IDTWEET, A.DATE_LU, T.DATE_P, T.IDUSER AS ISUSRTWEET FROM MENTIONNER A INNER JOIN TWEET T ON A.IDTWEET = T.IDTWEET WHERE A.IDUSER = :uid";
 	$sth = $db->prepare($sql);
 	/*$sth->bindValue(':uid', intval($uid), \PDO::PARAM_INT);*/
 	$sth->execute(array(
@@ -105,13 +105,13 @@ function get_mentioned_notifications($uid) {
 	$mentionednotifs = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
-		//echo "found";
-		if($line[2]==null){
+		echo "found";
+		if($line[1]==null){
 			$mentionednotifs[] = (object) array(
 						"type" => "mentioned",
 						"post" => \Model\Post\get($line[0]),
-						"mentioned_by" => \Model\User\get($line[1]),
-						"date" => new \DateTime($line[3]),
+						"mentioned_by" => \Model\User\get($line[3]),
+						"date" => new \DateTime($line[2]),
 						"reading_date" => null
 	    				);
 		}
@@ -119,14 +119,14 @@ function get_mentioned_notifications($uid) {
 			$mentionednotifs[] = (object) array(
 						"type" => "mentioned",
 						"post" => \Model\Post\get($line[0]),
-						"mentioned_by" => \Model\User\get($line[1]),
-						"date" => new \DateTime($line[3]),
-						"reading_date" => new \DateTime($line[2]),
+						"mentioned_by" => \Model\User\get($line[3]),
+						"date" => new \DateTime($line[2]),
+						"reading_date" => new \DateTime($line[1]),
 	    				);
 		}
-		mentioned_notification_seen($line[1], $line[0]);
+		mentioned_notification_seen($line[3], $line[0]);
 	}
-	//echo "\n";
+	echo "\n";
 	return $mentionednotifs; 
 
 }
