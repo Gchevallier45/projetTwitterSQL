@@ -53,7 +53,6 @@ Stack trace:
  * @warning this function hashes the password
  */
 function create($username, $name, $password, $email, $avatar_path) {
-    /**return 1337;*/
 	$db = \Db::dbc();
 	$sql = "INSERT INTO UTILISATEUR (USERNAME,NAME,SIGNUP_DATE,EMAIL,PASS) VALUES (:username,
 	:name, :signup, :email, :password)";

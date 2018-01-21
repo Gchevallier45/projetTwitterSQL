@@ -31,7 +31,7 @@ function get($id) {
 	    return (object) array(
 		"id" => $result[0],
 		"text" => $result[3],
-		"date" => new \DateTime($result[2]),/*new \DateTime('2011-01-01T15:03:01'),*/
+		"date" => new \DateTime($result[2]),
 		"author" => \Model\User\get($result[1]),
 		"responds_to" => get($result[4]),
 	    );
@@ -102,8 +102,6 @@ function create($author_id, $text, $response_to=null) {
 		if($user != null){
 			mention_user($postId,$user->id);
 		}
-		//echo 'lol'.$match;
-		//\Model\Hashtag\attach($postId,$match);
 	}	
 
 	return $postId;
@@ -147,7 +145,6 @@ function get_mentioned($pid) {
 	foreach ($result as $line){
 		$userFull [] = \Model\User\get($line[0]);
 	}
-	//$userFull = get($user[0]);
 
 	return $userFull;
 }
@@ -271,7 +268,6 @@ function list_user_posts($id, $date_sorted="DESC") {
 	}
 
     	return $postArray;
-    //return [];
 }
 
 /**
@@ -280,7 +276,6 @@ function list_user_posts($id, $date_sorted="DESC") {
  * @return the users objects who liked the post
  */
 function get_likes($pid) {
-//echo "piiiiiiiid".$pid;
 	$db = \Db::dbc();
 	$sql = "SELECT IDUSER FROM AIMER WHERE IDTWEET = :pid";
 	$sth = $db->prepare($sql);
@@ -294,7 +289,6 @@ function get_likes($pid) {
 		$likesarray[] = \Model\User\get($line[0]);
 	}
     return $likesarray;
-	//return [];1
 }
 
 /**
@@ -303,7 +297,6 @@ function get_likes($pid) {
  * @return the posts objects which are a response to the actual post
  */
 function get_responses($pid) {
-	//echo "POST : ".$pid;
 	$db = \Db::dbc();
 	$sql = "SELECT IDTWEET FROM TWEET WHERE IDTWEET_REPONDRE = :pid";
 	$sth = $db->prepare($sql);
@@ -314,11 +307,9 @@ function get_responses($pid) {
 	$postarray = array();
 	$result = $sth->fetchAll();	
 	foreach($result as $line){
-		//echo "LINE :".$line[0];
 		$postarray[] = get($line[0]);
 	}
     return $postarray;    
-	//return [];
 }
 
 /**

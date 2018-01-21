@@ -19,11 +19,8 @@ use \PDOException;
  */
 function get_liked_notifications($uid) {
 	$db = \Db::dbc();
-	//echo "uid:".$uid;
-	//$sql = "SELECT A.IDTWEET, A.IDUSER, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.DATE_LU IS NULL AND T.IDUSER = :uid";
 	$sql = "SELECT A.IDTWEET, A.IDUSER, A.DATE_LU, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDTWEET = T.IDTWEET WHERE A.IDTWEET IN (SELECT IDTWEET FROM TWEET WHERE IDUSER = :uid)";
 	$sth = $db->prepare($sql);
-	/*$sth->bindValue(':uid', intval($uid), \PDO::PARAM_INT);*/
 	$sth->execute(array(
 	':uid' => $uid
 	)
@@ -31,7 +28,6 @@ function get_liked_notifications($uid) {
 	$likednotifs = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
-		//echo "found";
 		if($line[2]==null){
 			$likednotifs[] = (object) array(
 						"type" => "liked",
@@ -50,19 +46,8 @@ function get_liked_notifications($uid) {
 						"reading_date" => new \DateTime($line[2]),
 	    				);
 		}
-		//liked_notification_seen($line[0], $line[1]);
 	}
-	//echo "\n";
 	return $likednotifs;    
-
-
-	/*return [(object) array(
-        "type" => "liked",
-        "post" => \Model\Post\get(1),
-        "liked_by" => \Model\User\get(3),
-        "date" => new \DateTime("NOW"),
-        "reading_date" => new \DateTime("NOW")
-    )];*/
 }
 
 /**
@@ -91,13 +76,9 @@ function liked_notification_seen($pid, $uid) {
  * @warning the reading_date object is either a DateTime object or null (if it hasn't been read)
  */
 function get_mentioned_notifications($uid) {
-
 	$db = \Db::dbc();
-	//echo "uid:".$uid;
-	//$sql = "SELECT A.IDTWEET, A.IDUSER, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.DATE_LU IS NULL AND T.IDUSER = :uid";
 	$sql = "SELECT A.IDTWEET, A.DATE_LU, T.DATE_P, T.IDUSER AS ISUSRTWEET FROM MENTIONNER A INNER JOIN TWEET T ON A.IDTWEET = T.IDTWEET WHERE A.IDUSER = :uid";
 	$sth = $db->prepare($sql);
-	/*$sth->bindValue(':uid', intval($uid), \PDO::PARAM_INT);*/
 	$sth->execute(array(
 	':uid' => $uid
 	)
@@ -105,7 +86,6 @@ function get_mentioned_notifications($uid) {
 	$mentionednotifs = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
-		//echo "found";
 		if($line[1]==null){
 			$mentionednotifs[] = (object) array(
 						"type" => "mentioned",
@@ -124,9 +104,7 @@ function get_mentioned_notifications($uid) {
 						"reading_date" => new \DateTime($line[1]),
 	    				);
 		}
-		mentioned_notification_seen($line[3], $line[0]);
 	}
-	//echo "\n";
 	return $mentionednotifs; 
 
 }
@@ -157,11 +135,8 @@ function mentioned_notification_seen($uid, $pid) {
  */
 function get_followed_notifications($uid) {
 	$db = \Db::dbc();
-	//echo "uid:".$uid;
-	//$sql = "SELECT A.IDTWEET, A.IDUSER, T.DATE_P FROM AIMER A INNER JOIN TWEET T ON A.IDUSER = T.IDUSER WHERE A.DATE_LU IS NULL AND T.IDUSER = :uid";
 	$sql = "SELECT IDUSER, IDUSER_1, DATE_SUIVI, DATE_LU FROM SUIVRE WHERE IDUSER_1 = :uid";
 	$sth = $db->prepare($sql);
-	/*$sth->bindValue(':uid', intval($uid), \PDO::PARAM_INT);*/
 	$sth->execute(array(
 	':uid' => $uid
 	)
@@ -169,7 +144,6 @@ function get_followed_notifications($uid) {
 	$followednotifs = array();
 	$result = $sth->fetchAll();
 	foreach($result as $line){
-		//echo "found";
 		if($line[3]==null){
 			$followednotifs[] = (object) array(
 						"type" => "followed",
@@ -186,18 +160,8 @@ function get_followed_notifications($uid) {
 						"reading_date" => new \DateTime($line[3]),
 	    				);
 		}
-		//mentioned_notification_seen($line[0], $line[1]);
 	}
-	//echo "\n";
 	return $followednotifs; 
-
-
-    /*return [(object) array(
-        "type" => "followed",
-        "user" => \Model\User\get(1),
-        "date" => new \DateTime("NOW"),
-        "reading_date" => new \DateTime("NOW")
-    )];*/
 }
 
 /**
